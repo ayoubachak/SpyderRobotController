@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
                     speed1, speed2, speed3,
                     up, down, lock;
 
+    private String lockedval = "Unlocked";
+    private String walkingmodeval = "Normal";
+    private String speedval = "Speed 1";
+    private String direction = " ";
+    private TextView lockedTextView, walkingTextView, speedTextView, directionTextView;
+
 
     private BluetoothAdapter btAdapter;
     private BluetoothSocket btSocket = BluetoothSocketHolder.getSocket();
@@ -38,11 +45,19 @@ public class MainActivity extends AppCompatActivity {
     private ConnectThread connectThread;
 
     public void setClickListeners(){
+        lockedTextView = findViewById(R.id.lockedval);
+        walkingTextView = findViewById(R.id.walkingmodeval);
+        speedTextView = findViewById(R.id.speedval);
+        directionTextView = findViewById(R.id.dir);
+
         forward = findViewById(R.id.forward);
         forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("F");
+                if(sendChar("F")){
+                    direction = "F";
+                }
+                updateValues();
             }
         });
 
@@ -50,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
         backwards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("B");
+                if(sendChar("B")){
+                    direction = "B";
+                }
+                updateValues();
             }
         });
 
@@ -58,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("L");
+                if(sendChar("L")){
+                    direction = "L";
+                }
+                updateValues();
             }
         });
 
@@ -66,7 +87,10 @@ public class MainActivity extends AppCompatActivity {
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("R");
+                if(sendChar("R")){
+                    direction = "R";
+                }
+                updateValues();
             }
         });
 
@@ -74,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
         climbing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("C");
+                if(sendChar("C")){
+                    walkingmodeval = "Climbing";
+                }
+                updateValues();
             }
         });
 
@@ -82,7 +109,10 @@ public class MainActivity extends AppCompatActivity {
         sliding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("S");
+                if(sendChar("S")){
+                    walkingmodeval = "Sliding";
+                }
+                updateValues();
             }
         });
 
@@ -90,7 +120,10 @@ public class MainActivity extends AppCompatActivity {
         grassWalk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("GW");
+                if(sendChar("GW")){
+                    walkingmodeval = "Grass Walk";
+                }
+                updateValues();
             }
         });
 
@@ -98,7 +131,10 @@ public class MainActivity extends AppCompatActivity {
         inclinedWalk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("IW");
+                if(sendChar("IW")){
+                    walkingmodeval = "Inclined Walk";
+                }
+                updateValues();
             }
         });
 
@@ -106,7 +142,10 @@ public class MainActivity extends AppCompatActivity {
         normal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("N");
+                if(sendChar("N")){
+                    walkingmodeval = "Normal";
+                }
+                updateValues();
             }
         });
 
@@ -114,7 +153,10 @@ public class MainActivity extends AppCompatActivity {
         speed1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("1");
+                if(sendChar("1")){
+                    speedval = "Speed 1";
+                }
+                updateValues();
             }
         });
 
@@ -122,7 +164,10 @@ public class MainActivity extends AppCompatActivity {
         speed2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("2");
+                if(sendChar("2")){
+                    speedval = "Speed 2";
+                }
+                updateValues();
             }
         });
 
@@ -130,7 +175,10 @@ public class MainActivity extends AppCompatActivity {
         speed3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("3");
+                if(sendChar("3")){
+                    speedval = "Speed 3";
+                }
+                updateValues();
             }
         });
 
@@ -138,7 +186,10 @@ public class MainActivity extends AppCompatActivity {
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("U");
+                if(sendChar("U")){
+                    direction = "Up";
+                }
+                updateValues();
             }
         });
 
@@ -146,7 +197,10 @@ public class MainActivity extends AppCompatActivity {
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("D");
+                if(sendChar("D")){
+                    direction = "Dwn";
+                }
+                updateValues();
             }
         });
 
@@ -154,11 +208,20 @@ public class MainActivity extends AppCompatActivity {
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendChar("LCK");
+                if(sendChar("LK")){
+                    lockedval = lockedval == "Unlocked"?"Locked":"Unlocked";
+                }
+                updateValues();
             }
         });
     }
 
+    public void updateValues(){
+        lockedTextView.setText(lockedval);
+        directionTextView.setText(direction);
+        walkingTextView.setText(walkingmodeval);
+        speedTextView.setText(speedval);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,22 +243,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void sendChar(String s){
+    public boolean sendChar(String s){
         if (btSocket != null && btSocket.isConnected()) {
-            sendData(s);
+            return sendData(s);
         } else {
             Toast.makeText(getApplicationContext(), "Not connected to device", Toast.LENGTH_SHORT).show();
         }
+        return false;
     }
 
     // method to send data to the connected device
-    private void sendData(String message) {
+    private boolean sendData(String message) {
         try {
             outputStream = btSocket.getOutputStream();
             outputStream.write(message.getBytes());
+            return true;
         } catch (IOException e) {
             Log.e(TAG, "Error sending data", e);
         }
+        return false;
     }
 
     // method to connect to the selected device from ScanActivity

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/direction"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -123,7 +124,7 @@
         android:text="Normal"
         app:layout_constraintEnd_toStartOf="@+id/sliding"
         app:layout_constraintStart_toEndOf="@+id/climbing"
-        app:layout_constraintTop_toBottomOf="@+id/walkinmodeval" />
+        app:layout_constraintTop_toBottomOf="@+id/walkingmodeval" />
 
     <Button
         android:id="@+id/spd1"
@@ -169,7 +170,7 @@
         app:layout_constraintVertical_bias="0.596" />
 
     <TextView
-        android:id="@+id/walkinmodeval"
+        android:id="@+id/walkingmodeval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
@@ -216,7 +217,18 @@
         android:id="@+id/lockedval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
         android:text="Unlocked"
-        tools:layout_editor_absoluteX="179dp"
-        tools:layout_editor_absoluteY="85dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lock" />
+
+    <TextView
+        android:id="@+id/dir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/backwards"
+        app:layout_constraintEnd_toStartOf="@+id/right"
+        app:layout_constraintStart_toEndOf="@+id/left"
+        app:layout_constraintTop_toBottomOf="@+id/forward" />
 </androidx.constraintlayout.widget.ConstraintLayout>
